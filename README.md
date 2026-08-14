@@ -19,7 +19,9 @@
 
 ![Player markers displayed by XaeroTracker](https://cdn.modrinth.com/data/ECfsUJsZ/images/3d1bea06e501608ddda199f08e4ff80adfbe049a.png)
 
-XaeroTracker is a server-side Paper plugin that reproduces Xaero's `everyoneTracksEveryone` behaviour. It sends the live positions of eligible online players to compatible [Xaero's Minimap](https://modrinth.com/mod/xaeros-minimap) and [Xaero's World Map](https://modrinth.com/mod/xaeros-world-map) clients, allowing them to render player markers on the minimap and full-screen map.
+XaeroTracker is a server-side Paper plugin that reproduces Xaero's `everyoneTracksEveryone` behaviour.
+It sends the live positions of eligible online players to compatible [Xaero's Minimap](https://modrinth.com/mod/xaeros-minimap) and [Xaero's World Map](https://modrinth.com/mod/xaeros-world-map) clients,
+allowing them to render player markers on the minimap and full-screen map.
 
 ## Features
 
@@ -50,10 +52,11 @@ Version 1.4.0 targets Paper 26.2. Spigot and Folia are not part of this release'
 1. Download the release JAR, or [build it from source](#building-from-source).
 2. Place `XaeroTracker-1.4.0-all.jar` in the server's `plugins` directory.
 3. Start or fully restart the server.
-4. Confirm that `XaeroTracker v1.4.0` is enabled in the console.
+4. Confirm that `XaeroTracker` is enabled in the console.
 5. Have players join with a compatible Xaero client mod.
 
-The plugin creates `plugins/XaeroTracker/config.yml` on first startup. Its preference files are created when a tracking preference is changed for the first time.
+The plugin creates `plugins/XaeroTracker/config.yml` on first startup.
+Its preference files are created when a tracking preference is changed for the first time.
 
 ## Visibility rules
 
@@ -61,7 +64,7 @@ By default, an online player is shared unless they:
 
 - opted out with `/xt toggleTracked`;
 - are invisible;
-- are in spectator mode; or
+- are in spectator mode;
 - have `vanished` metadata set by another plugin.
 
 A viewer can bypass those restrictions with `/xt toggleTrackEveryone`, or for one target with `xaerotracker.tracker.<playerName>`. The `only-sync-same-world` boundary still applies to all visibility overrides.
@@ -143,6 +146,7 @@ Assign a different `level-id` to every backend that players reach through the sa
 ### Configuration changes do not take effect
 
 Fully restart the server. There is no `/xt reload` command.
+Or reload by other plugins which allow enabling/disabling other plugins.
 
 ## Building from source
 
@@ -161,7 +165,7 @@ On Windows:
 The distributable plugin is written to:
 
 ```text
-build/libs/XaeroTracker-1.4.0-all.jar
+build/libs/XaeroTracker-<version>-all.jar
 ```
 
 To launch a local Paper 26.2 development server:

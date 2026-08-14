@@ -1,7 +1,7 @@
 <h1 align="center">XaeroTracker</h1>
 
 <p align="center">
-  无需在服务器端安装 Xaero 模组，即可在 Xaero 的小地图和世界地图上显示符合条件的在线玩家。
+  无需在服务端安装 Xaero 模组，即可在 Xaero 的小地图和世界地图上显示符合条件的在线玩家。
 </p>
 
 <p align="center">
@@ -19,7 +19,9 @@
 
 ![XaeroTracker 显示的玩家标记](https://cdn.modrinth.com/data/ECfsUJsZ/images/3d1bea06e501608ddda199f08e4ff80adfbe049a.png)
 
-XaeroTracker 是一款服务器端 Paper 插件，用于复现 Xaero 的 `everyoneTracksEveryone` 行为。它会将符合条件的在线玩家的实时位置发送给兼容的 [Xaero's Minimap](https://modrinth.com/mod/xaeros-minimap) 和 [Xaero's World Map](https://modrinth.com/mod/xaeros-world-map) 客户端，使其能够在小地图和全屏地图上显示玩家标记。
+XaeroTracker 是一款 Paper 服务器插件，用于模拟 Xaero 的 `everyoneTracksEveryone` 行为。
+它会将符合条件的在线玩家的实时位置发送给装有 [Xaero's Minimap](https://modrinth.com/mod/xaeros-minimap) 和 [Xaero's World Map](https://modrinth.com/mod/xaeros-world-map) 模组的客户端，
+使其能够在小地图和世界地图上显示玩家标记。
 
 ## 功能
 
@@ -31,7 +33,7 @@ XaeroTracker 是一款服务器端 Paper 插件，用于复现 Xaero 的 `everyo
 - 可将追踪范围限制在同一个 Bukkit 世界内。
 - 支持配置位置同步间隔。
 - 重启后仍会保留玩家的追踪偏好。
-- 自动生成服务器 level ID，以正确分隔地图数据，并支持代理网络。
+- 自动生成服务器 level ID，以正确分隔代理网络下的地图数据。
 - 提供英语和简体中文的命令反馈。
 
 ## 运行要求
@@ -41,7 +43,7 @@ XaeroTracker 是一款服务器端 Paper 插件，用于复现 Xaero 的 `everyo
 | 服务器 | [Paper](https://papermc.io/downloads/paper) 26.2 |
 | Java | Java 25 或更高版本 |
 | 客户端 | 适用于 Minecraft 26.2 的 Xaero's Minimap 或 Xaero's World Map |
-| 服务器端 Xaero 模组 | 不需要 |
+| 服务端 Xaero 模组 | 不需要 |
 
 1.4.0 版本以 Paper 26.2 为目标。Spigot 和 Folia 不在此版本的兼容性目标范围内。
 
@@ -50,7 +52,7 @@ XaeroTracker 是一款服务器端 Paper 插件，用于复现 Xaero 的 `everyo
 1. 下载发行版 JAR，或[从源代码构建](#从源代码构建)。
 2. 将 `XaeroTracker-1.4.0-all.jar` 放入服务器的 `plugins` 目录。
 3. 启动或完整重启服务器。
-4. 在控制台中确认 `XaeroTracker v1.4.0` 已成功启用。
+4. 在控制台中确认 `XaeroTracker` 已成功启用。
 5. 让玩家使用兼容的 Xaero 客户端模组加入服务器。
 
 插件会在首次启动时创建 `plugins/XaeroTracker/config.yml`；玩家偏好文件则会在首次更改对应的追踪偏好时创建。
@@ -61,10 +63,11 @@ XaeroTracker 是一款服务器端 Paper 插件，用于复现 Xaero 的 `everyo
 
 - 使用 `/xt toggleTracked` 选择不被追踪；
 - 处于隐身状态；
-- 处于观察者模式；或
+- 处于观察者模式；
 - 被其他插件设置了 `vanished` 元数据。
 
-查看者可以使用 `/xt toggleTrackEveryone` 绕过这些限制，也可以通过 `xaerotracker.tracker.<playerName>` 仅绕过指定目标的限制。`only-sync-same-world` 所设定的世界范围仍适用于所有可见性覆盖规则。
+查看者可以使用 `/xt toggleTrackEveryone` 绕过这些限制， 也可以通过 `xaerotracker.tracker.<playerName>` 仅绕过指定目标的限制。
+`only-sync-same-world` 所设定的世界范围仍适用于所有可见性覆盖规则。
 
 > [!WARNING]
 > 可见性覆盖规则可能会暴露已隐身、被隐藏、处于观察者模式或已选择退出的玩家坐标。请仅将这些权限授予可信任的用户。
@@ -77,14 +80,15 @@ sync-cooldown: 250
 only-sync-same-world: false
 ```
 
-| 选项 | 默认值 | 说明 |
-|---|---:|---|
+| 选项 | 默认值 | 说明                                                         |
+|---|---:|------------------------------------------------------------|
 | `should-send-level-id` | `true` | 向兼容的 Xaero 客户端发送所需的服务器 level ID。除非已有其他服务器实现发送该 ID，否则请保持启用。 |
-| `level-id` | 自动生成 | 首次启动时随机生成并保存。通过同一公网地址访问的每个后端服务器都应使用不同的值。 |
-| `sync-cooldown` | `250` | 同一玩家两次位置更新之间的最短间隔，单位为毫秒；该值会向上取整到完整的服务器 tick。 |
-| `only-sync-same-world` | `false` | 启用后，仅在同一个 Bukkit 世界内的玩家之间共享位置。 |
+| `level-id` | 自动生成 | 首次启动时随机生成并保存。通过同一地址访问的每个后端服务器都应使用不同的值。                     |
+| `sync-cooldown` | `250` | 同一玩家两次位置更新之间的最短间隔，单位为毫秒；该值会向上取整到完整的服务器 tick。               |
+| `only-sync-same-world` | `false` | 启用后，仅在同一个 Bukkit 世界内的玩家之间共享位置。                             |
 
-配置更改需要完整重启服务器；XaeroTracker 不提供重载命令。
+配置更改需要完整重启服务器，XaeroTracker 不提供重载命令。
+或者通过其他提供启用/禁用其他插件功能的插件来重载。
 
 ### 代理网络
 
@@ -103,7 +107,7 @@ Xaero 使用 `level-id` 区分通过同一地址访问的地图。在 Velocity �
 | `/xt toggleTracked` | 切换命令发送者是否可被常规追踪。仅限玩家执行。 | `xaerotracker.toggleTracked` | 所有人 |
 | `/xt toggleTracked <player>` | 切换另一名玩家是否可被常规追踪。 | `xaerotracker.toggleTracked.others` | 管理员（OP） |
 | `/xt toggleTrackEveryone` | 切换命令发送者是否绕过常规可见性限制。仅限玩家执行。 | `xaerotracker.toggleTrackEveryone` | 管理员（OP） |
-| `/xt toggleTrackEveryone <player>` | 切换另一名玩家的可见性限制绕过状态。 | `xaerotracker.toggleTrackEveryone.others` | 管理员（OP） |
+| `/xt toggleTrackEveryone <player>` | 切换另一名玩家是否绕过常规可见性限制。 | `xaerotracker.toggleTrackEveryone.others` | 管理员（OP） |
 
 玩家偏好按名称保存。指定离线玩家时，请使用其准确的 Minecraft 名称并保持大小写一致。
 
@@ -130,15 +134,15 @@ Xaero 使用 `level-id` 区分通过同一地址访问的地图。在 Velocity �
 
 ### 玩家显示为圆点而不是头像
 
-在 **Minimap Settings → Entity Radar Categories** 中启用图标或头像。具体菜单文字可能因 Xaero 版本而异。
+在 **Minimap Settings → Entity Radar Categories** 中启用图标或头像。具体位置可能因 Xaero 版本而异。
 
 ### 只显示部分玩家
 
 检查玩家是否选择退出、是否隐身、是否处于观察者模式、是否被 vanish 插件隐藏，以及权限覆盖规则和 `only-sync-same-world` 设置。
 
-### 代理网络后的地图数据混在一起
+### 使用代理服务器时地图数据混在一起
 
-为通过同一公网服务器地址访问的每个后端分配不同的 `level-id`。
+为通过同一地址访问的每个后端分配不同的 `level-id`。
 
 ### 配置更改没有生效
 
@@ -161,7 +165,7 @@ Xaero 使用 `level-id` 区分通过同一地址访问的地图。在 Velocity �
 可分发的插件将生成在：
 
 ```text
-build/libs/XaeroTracker-1.4.0-all.jar
+build/libs/XaeroTracker-<version>-all.jar
 ```
 
 如需启动本地 Paper 26.2 开发服务器：

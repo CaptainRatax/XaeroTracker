@@ -2,6 +2,8 @@ package info.infinf.xaeroTracker.util;
 
 import info.infinf.xaeroTracker.XaeroTracker;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -18,23 +20,29 @@ public final class MessageUtil {
     private MessageUtil() {
     }
 
-    public static byte[] getLevelIdMessage(int levelId) {
+    public static byte @NotNull [] getLevelIdMessage(int levelId) {
         return ByteBuffer.allocate(5)
                 .put(LEVEL_ID_PACKET)
                 .putInt(levelId)
                 .array();
     }
 
-    public static byte[] getHandshakeMessage() {
+    public static byte @NotNull [] getHandshakeMessage() {
         return ByteBuffer.allocate(5)
                 .put(HANDSHAKE_PACKET)
                 .putInt(XaeroTracker.SUPPORTED_NETWORK_VERSION)
                 .array();
     }
 
-    public static byte[] getTrackPlayerMessage(Player pl) {
+    public static byte @NotNull [] getTrackPlayerMessage(@NotNull Player pl) {
+        // 1 (MessageType) + 1 (CompoundTagType)
+        // 24 (6 Tags, 4 bytes per Tag == 1 byte for TagType + 2 for TagName length + 1 for TagName) +
+        // 1 (boolean tag) + 24 (3 double tags) + 20 (UUID int array) +
+        // 22 (dimension ResourceLocation minecraft:the_nether) +
+        // 1 (EndTag) +
+        // Extra bytes for redundancy
         // Packet type followed by an unnamed NBT compound.
-        var msg = new ByteArrayOutputStream(93);
+        var msg = new ByteArrayOutputStream(100);
 
         try (var wrappedMsg = new DataOutputStream(msg)) {
             wrappedMsg.writeByte(TRACKED_PLAYER_PACKET);
@@ -69,7 +77,11 @@ public final class MessageUtil {
         return msg.toByteArray();
     }
 
-    public static byte[] getUntrackPlayerMessage(Player pl) {
+    public static byte @NotNull [] getUntrackPlayerMessage(@NotNull Player pl) {
+        // 1 (MessageType) + 1 (CompoundTagType)
+        // 8 (2 Tags, 1 byte for TagType, 2 for TagName length, 1 for TagName, 4 bytes per Tag) +
+        // 1 (boolean tag) + 20 (UUID int array)
+        // 1 (EndTag)
         // The same NBT packet with the remove flag and the player's UUID.
         var msg = new ByteArrayOutputStream(32);
 
@@ -94,7 +106,8 @@ public final class MessageUtil {
         return msg.toByteArray();
     }
 
-    public static byte[] getTrackResetMessage() {
+    @Contract(value = " -> new", pure = true)
+    public static byte @NotNull [] getTrackResetMessage() {
         return new byte[] {RESET_PACKET};
     }
 }

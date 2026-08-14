@@ -114,7 +114,7 @@ public final class XaeroTracker extends JavaPlugin implements Listener {
         }
     }
 
-    private void initPlayer(Player pl, PlayerData data) {
+    private void initPlayer(@NotNull Player pl, PlayerData data) {
         try {
             var addChannel = pl.getClass().getMethod("addChannel", String.class);
             addChannel.invoke(pl, MINIMAP_PACKET_ID);
@@ -139,7 +139,7 @@ public final class XaeroTracker extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onPlayerChangedWorld(PlayerChangedWorldEvent e) {
+    public void onPlayerChangedWorld(@NotNull PlayerChangedWorldEvent e) {
         var pl = e.getPlayer();
         var data = playerData.get(pl);
         if (data != null) {
@@ -168,7 +168,7 @@ public final class XaeroTracker extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onPlayerMove(PlayerMoveEvent e) {
+    public void onPlayerMove(@NotNull PlayerMoveEvent e) {
         if (!e.hasExplicitlyChangedPosition()) {
             return;
         }
@@ -194,7 +194,7 @@ public final class XaeroTracker extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onQuit(PlayerQuitEvent e) {
+    public void onQuit(@NotNull PlayerQuitEvent e) {
         var pl = e.getPlayer();
         untrack(pl, playerData.get(pl));
         playerData.remove(pl);
@@ -256,7 +256,7 @@ public final class XaeroTracker extends JavaPlugin implements Listener {
         return version;
     }
 
-    public boolean shouldBeTracked(Player pl) {
+    public boolean shouldBeTracked(@NotNull Player pl) {
         return !trackIgnoreList.contains(pl.getName()) &&
                 !pl.isInvisible() &&
                 pl.getGameMode() != GameMode.SPECTATOR &&
@@ -270,15 +270,13 @@ public final class XaeroTracker extends JavaPlugin implements Listener {
      * @param other
      * @return Should other track pl ignoring {@link #shouldBeTracked(Player)}
      */
-    public boolean shouldBeTracked(Player pl, Player other) {
+    public boolean shouldBeTracked(Player pl, @NotNull Player other) {
         return trackBypassList.contains(other.getName()) ||
                 other.hasPermission(new Permission("xaerotracker.tracker." + pl.getName(), PermissionDefault.FALSE));
     }
 
     /**
      * Sync location of pl to other players on server
-     *
-     * @param pl
      */
     public void track(@NotNull Player pl, @NotNull PlayerData plData) {
         var msg = MessageUtil.getTrackPlayerMessage(pl);
@@ -385,7 +383,7 @@ public final class XaeroTracker extends JavaPlugin implements Listener {
      * @param pl
      * @param msg
      */
-    public void send(Player pl, byte[] msg) {
+    public void send(@NotNull Player pl, byte @NotNull [] msg) {
         pl.sendPluginMessage(this, MINIMAP_PACKET_ID, msg);
         pl.sendPluginMessage(this, WORLD_MAP_PACKET_ID, msg);
     }
